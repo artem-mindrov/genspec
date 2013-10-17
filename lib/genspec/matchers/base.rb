@@ -97,12 +97,17 @@ module GenSpec
       end
       
       def mktmpdir(&block)
-        tmpdir_args = [ @described.to_s ]
-        if GenSpec.root
-          FileUtils.mkdir_p GenSpec.root
-          tmpdir_args << GenSpec.root
+        if path = @generator_options[:destination_root]
+          FileUtils.mkpath(path) unless File.directory?(path)
+          yield path
+        else
+          tmpdir_args = [ @described.to_s ]
+          if GenSpec.root
+            FileUtils.mkdir_p GenSpec.root
+            tmpdir_args << GenSpec.root
+          end
+          Dir.mktmpdir *tmpdir_args, &block
         end
-        Dir.mktmpdir *tmpdir_args, &block
       end
       
       def invoke
