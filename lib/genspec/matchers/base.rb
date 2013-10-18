@@ -37,7 +37,7 @@ module GenSpec
         
         raise "Could not find generator: #{@described.inspect}" unless @generator
         
-        inject_error_handlers!
+        inject_error_handlers! unless @generator.new.respond_to?(:invoke_with_genspec_error_handler)
         invoking
         invoke
         matched?
